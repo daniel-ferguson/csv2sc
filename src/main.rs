@@ -1,3 +1,4 @@
+#[macro_use]
 extern crate clap;
 extern crate csv;
 
@@ -14,8 +15,8 @@ use position::Position;
 fn app<'a, 'b>() -> clap::App<'a, 'b> {
     use clap::{App, Arg};
     App::new("csv2sc")
-        .version("0.1")
-        .author("Daniel Ferguson <danielferguson@me.com>")
+        .version(crate_version!())
+        .author(crate_authors!())
         .about("Converts CSV or TSV input into sc spreadsheet format")
         .arg(
             Arg::with_name("tsv")
