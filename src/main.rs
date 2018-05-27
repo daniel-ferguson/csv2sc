@@ -40,6 +40,21 @@ fn parse_field(raw: &str) -> Field {
     }
 }
 
+fn app<'a, 'b>() -> clap::App<'a, 'b> {
+    use clap::{App, Arg};
+    App::new("csv2sc")
+        .version("0.1")
+        .author("Daniel Ferguson <danielferguson@me.com>")
+        .about("Converts CSV or TSV input into sc spreadsheet format")
+        .arg(
+            Arg::with_name("tabs")
+                .short("t")
+                .long("tabs")
+                .takes_value(false)
+                .help("Use tabs rather than commas as delimiter"),
+        )
+}
+
 struct Position {
     pub col: u32,
     pub row: u32,
@@ -100,8 +115,13 @@ macro_rules! fmt_num {
     };
 }
 
-fn run() -> Result<(), Box<StdError>> {
-    let mut reader = csv::Reader::from_reader(io::stdin());
+fn run(tsv: bool) -> Result<(), Box<StdError>> {
+    let mut reader = csv::ReaderBuilder::new();
+    if tsv {
+        reader.delimiter(b'\t');
+    }
+
+    let mut reader = reader.from_reader(io::stdin());
 
     let stdout = io::stdout();
     let mut stdout = stdout.lock();
@@ -125,7 +145,9 @@ fn run() -> Result<(), Box<StdError>> {
 }
 
 fn main() {
-    if let Err(e) = run() {
+    let matches = app().get_matches();
+
+    if let Err(e) = run(matches.is_present("tabs")) {
         eprintln!("{}", e);
         std::process::exit(1);
     }
