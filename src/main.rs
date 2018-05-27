@@ -18,11 +18,11 @@ fn app<'a, 'b>() -> clap::App<'a, 'b> {
         .author("Daniel Ferguson <danielferguson@me.com>")
         .about("Converts CSV or TSV input into sc spreadsheet format")
         .arg(
-            Arg::with_name("tabs")
+            Arg::with_name("tsv")
                 .short("t")
-                .long("tabs")
+                .long("tsv")
                 .takes_value(false)
-                .help("Use tabs rather than commas as delimiter"),
+                .help("Use tabs rather than commas as field delimiter"),
         )
 }
 
@@ -70,7 +70,7 @@ fn run(tsv: bool) -> Result<(), Box<StdError>> {
 fn main() {
     let matches = app().get_matches();
 
-    if let Err(e) = run(matches.is_present("tabs")) {
+    if let Err(e) = run(matches.is_present("tsv")) {
         eprintln!("{}", e);
         std::process::exit(1);
     }
